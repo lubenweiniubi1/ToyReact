@@ -1,26 +1,22 @@
-for (let i of [1, 2, 3, 4]) {
-  console.log(i)
+import { createElement, render, Component } from "./toy-react.js"
+
+//继承默认行为
+class MyComponent extends Component {
+  render() {
+    return (
+      <div>
+        <h1>my component </h1>
+        {this.children}
+      </div>
+    )
+  }
 }
 
-function createElement(tagName, attributes, ...children) {
-  let e = document.createElement(tagName)
-  for (let p in attributes) {
-    e.setAttribute(p, attributes[p])
-  }
-  for (let child of children) {
-    if (typeof child === "string") {
-      //处理文本节点
-      child = document.createTextNode(child)
-    }
-    e.appendChild(child)
-  }
-  return e
-}
-
-document.body.appendChild(
-  <div id="a" class="b">
+render(
+  <MyComponent id="a" class="b">
     <div>abc</div>
     <div></div>
     <div></div>
-  </div>
+  </MyComponent>,
+  document.body
 )

@@ -92,3 +92,20 @@ document.body.appendChild(
 
 ```
 
+### 自定义标签明：
+
+```js
+let a =  <MyComponent id="a" class="b">
+    <div>abc</div>
+    <div></div>
+    <div></div>
+  </MyComponent>
+
+//转成
+document.body.appendChild(createElement(MyComponent, {//这里没有引号，是个函数或者是class
+  id: "a",
+  "class": "b"
+}, createElement("div", null, "abc"), createElement("div", null), createElement("div", null)));
+
+```
+
