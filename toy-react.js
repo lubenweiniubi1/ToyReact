@@ -11,7 +11,11 @@ class ElementWrapper {
         value
       )
     } else {
-      this.root.setAttribute(name, value)
+      if (name === "className") {
+        this.root.setAttribute("class", value)
+      } else {
+        this.root.setAttribute(name, value)
+      }
     }
   }
   appendChild(component) {
@@ -55,8 +59,16 @@ export class Component {
     this.render()[RENDER_TO_DOM](range)
   }
   rerender() {
-    this._range.deleteContents()
-    this[RENDER_TO_DOM](this._range)
+    let oldRange = this._range
+
+    let range = document.createRange()
+    range.setStart(oldRange.startContainer, oldRange.startOffset)
+    range.setEnd(oldRange.startContainer, oldRange.startOffset)
+
+    this[RENDER_TO_DOM](range)
+
+    oldRange.setStart(range.endContainer, range.endOffset)
+    oldRange.deleteContents()
   }
 
   setState(newState) {
@@ -70,7 +82,7 @@ export class Component {
     let merge = (oldState, newState) => {
       for (let p in newState) {
         //null 的typeof 也是object ，所以这里要联合判断
-        if (oldState[p] === null || typeof  oldState[p] !== "object") {
+        if (oldState[p] === null || typeof oldState[p] !== "object") {
           oldState[p] = newState[p]
         } else {
           merge(oldState[p], newState[p])
@@ -108,6 +120,9 @@ export function createElement(type, attributes, ...children) {
       if (typeof child === "string") {
         //处理文本节点
         child = new TextWrapper(child)
+      }
+      if (child === null) {
+        continue
       }
       if (typeof child === "object" && child instanceof Array) {
         //多个children传入的是数组
